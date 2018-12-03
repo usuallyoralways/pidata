@@ -1,0 +1,39 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver"/>
+        <property name="url" value="jdbc:postgresql://localhost/tpch"/>
+        <property name="username" value="admin"/>
+        <property name="password" value="admin"/>
+    </bean>
+
+
+
+
+
+    <bean id="tradeDao" class="ac.origination.trade_table.DAO.TradeDaoImpl" depends-on=" dataSource" init-method="initDatabase">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="entradeDao" class="ac.origination.trade_table.DAO.EnTradeDaoImpl" depends-on=" dataSource" init-method="initDatabase">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="entradeDaoClouder" class="ac.clouder.trade_table.DAO.CEnTradeDaoImpl" depends-on=" dataSource" init-method="initDatabase">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+
+    <bean id="testTheDao" class="test.origination.trade.TestEnDao.TestTheDao" depends-on=" dataSource" init-method="initDatabase">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+
+
+</beans>
