@@ -24,14 +24,14 @@ public class Main {
     public static long testRead = 0;
 
     public static void main(String[] args) {
-
+        //testValue();
         getAllData();
-        setFile();
+        //setFile();
     }
 
     public static void setFile() {
         try {
-            File file = new File("/home/lijun/桌面/data1.csv");
+            File file = new File("data1.csv");
             Writer writer = new FileWriter(file, true);
             ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
             TradeDaoImpl tradeDao = (TradeDaoImpl) applicationContext.getBean("tradeDao");
@@ -99,7 +99,7 @@ public class Main {
 
     public static void getAllData(){
         try {
-            File file = new File( "/home/lijun/桌面/data.csv");
+            File file = new File( "data.csv");
             Writer writer = new FileWriter(file, true);
             ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
             TestTheDao testTheDao = (TestTheDao) applicationContext.getBean("testTheDao");

@@ -4,8 +4,10 @@ package ac.origination.trade_table.DAO;
 import ac.common.DAO.Dao;
 import ac.origination.trade_table.DAO.Model.EnTrade;
 import ac.origination.trade_table.DAO.Model.Trade;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,6 +19,36 @@ public class TradeDaoImpl extends Dao {
         //初始化数据库
     }
 
+    public void dropandCreate(){
+        String sql="drop table t_trade;\n" +
+                "create TABLE public.t_trade\n" +
+                "(\n" +
+                "  tno serial,\n" +
+                "  cost double precision,\n" +
+                "  date date,\n" +
+                "  primary key(tno)\n" +
+                ");";
+        getJdbcTemplate().execute(sql);
+    }
+    public void addTrades(final List<Trade> trades) {
+        String sql = "insert into t_trade (cost,date) values(?,?) " +
+                "ON CONFLICT(tno) DO UPDATE" +
+                " SET tno=EXCLUDED.tno, cost=EXCLUDED.cost,date=EXCLUDED.date;";
+        try {
+            getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
+                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                    ps.setDouble(1,trades.get(i).getCost());
+                    ps.setDate(2, new java.sql.Date((trades.get(i).getDate().getTime())));
+                }
+
+                public int getBatchSize() {
+                    return trades.size();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public void addTrade(Trade trade){
         String sql = "insert into t_trade (cost,date) values(?,?) ";
         Object[] params = {trade.getCost(),trade.getDate()};

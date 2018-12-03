@@ -41,7 +41,7 @@ public class TestTheDao extends JdbcDaoSupport {
         }
     }
     public List<TestEnTrade> getListById(){
-        String sql="select * from t_test_entrypt ";
+        String sql="select * from t_test_entrypt order by b_hashvalue;";
         final List<TestEnTrade> testEnTrades = new ArrayList<>();
         getJdbcTemplate().query(sql,new RowCallbackHandler() {
             @Override
