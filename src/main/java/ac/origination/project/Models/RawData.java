@@ -1,4 +1,4 @@
-package project.Models;
+package ac.origination.project.Models;
 //series_id	year	period	value	footnote_codes
 public class RawData {
     int id;
