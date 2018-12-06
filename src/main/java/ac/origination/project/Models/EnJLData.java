@@ -1,6 +1,6 @@
 package ac.origination.project.Models;
 
-public class EnData {
+public class EnJLData {
     String  en_id;
     String en_series_id;
     String en_year;

@@ -1,6 +1,6 @@
 package ac.origination.project.Models;
 //series_id	year	period	value	footnote_codes
-public class RawData {
+public class JLRawData {
     int id;
     String series_id;
     int year;

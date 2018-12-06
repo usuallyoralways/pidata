@@ -13,16 +13,27 @@ public class Dao<T> extends JdbcDaoSupport {
         return null;
     }
 
-    public void insertEnItem(T object){
+    public void insertItem(T object){
 
+    }
+    public void insertItems(List<T> object){
+
+    }
+    public List<T> getListByIdOPValue(String  id, int value,String op){
+        return null;
     }
 
     public List<Integer> getHashsByBlockId(int id){
         return null;
     }
 
-    public List<EnTrade> getList(){
+    public List<T> getList(){
         return null;
+    }
+
+    //重新建表
+    public void dropandCreate(){
+
     }
 
 }

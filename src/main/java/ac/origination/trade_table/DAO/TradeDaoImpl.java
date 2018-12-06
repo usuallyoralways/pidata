@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TradeDaoImpl extends Dao {
+public class TradeDaoImpl extends Dao<Trade> {
     public void initDatabase() {
 
         //初始化数据库
@@ -30,7 +30,7 @@ public class TradeDaoImpl extends Dao {
                 ");";
         getJdbcTemplate().execute(sql);
     }
-    public void addTrades(final List<Trade> trades) {
+    public void insertItems(final List<Trade> trades) {
         String sql = "insert into t_trade (cost,date) values(?,?) " +
                 "ON CONFLICT(tno) DO UPDATE" +
                 " SET tno=EXCLUDED.tno, cost=EXCLUDED.cost,date=EXCLUDED.date;";
