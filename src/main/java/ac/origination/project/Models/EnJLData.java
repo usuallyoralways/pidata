@@ -1,14 +1,15 @@
 package ac.origination.project.Models;
 
 public class EnJLData {
-    String  en_id;
+    String en_id;
     String en_series_id;
     String en_year;
     String en_period;
     String en_value;
     String footnote_codes;
-    double a_blockId;   //value 的
-    double a_hashvalue; //value的
+    int a_blockId;   //value 的
+    int a_hashvalue; //value的
+    int a_hashpoint;    //value的
 
     public String getEn_id() {
         return en_id;
@@ -58,19 +59,28 @@ public class EnJLData {
         this.footnote_codes = footnote_codes;
     }
 
-    public double getA_blockId() {
+    public int getA_blockId() {
         return a_blockId;
     }
 
-    public void setA_blockId(double a_blockId) {
-        this.a_blockId = a_blockId;
-    }
 
-    public double getA_hashvalue() {
+    public int  getA_hashvalue() {
         return a_hashvalue;
     }
 
-    public void setA_hashvalue(double a_hashvalue) {
+    public void setA_blockId(int a_blockId) {
+        this.a_blockId = a_blockId;
+    }
+
+    public void setA_hashvalue(int a_hashvalue) {
         this.a_hashvalue = a_hashvalue;
+    }
+
+    public int getA_hashpoint() {
+        return a_hashpoint;
+    }
+
+    public void setA_hashpoint(int a_hashpoint) {
+        this.a_hashpoint = a_hashpoint;
     }
 }

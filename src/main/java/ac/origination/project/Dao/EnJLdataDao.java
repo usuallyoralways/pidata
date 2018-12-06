@@ -1,6 +1,7 @@
 package ac.origination.project.Dao;
 
 import ac.common.DAO.Dao;
+import ac.origination.project.Models.EnJLData;
 import ac.origination.project.Models.JLRawData;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -11,30 +12,45 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnJLdataDao  extends Dao<JLRawData>{
+public class EnJLdataDao  extends Dao<EnJLData>{
     public void initDatabase() {
-
+        String sql="create TABLE if not exists public.t_te_jldata\n" +
+                "(\n" +
+                "  en_id varchar(50),\n" +
+                "  en_series_id varchar(50),\n" +
+                "  en_year varchar(50),\n" +
+                "  en_period varchar(20)," +
+                "  en_value varchar(50)," +
+                "  footnote_codes varchar(20)," +
+                "   a_blockid integer," +
+                "   a_hashvalue integer," +
+                "   a_hashpoint \n" +
+                ");";
+        getJdbcTemplate().execute(sql);
         //初始化数据库
     }
 
     public void dropandCreate(){
         //series_id	year	period	value	footnote_codes
-        String sql="drop table t_jldata;\n" +
-                "create TABLE public.t_trade\n" +
+        String sql="drop table t_te_jldata;\n" +
+                "create TABLE public.t_te_jldata\n" +
                 "(\n" +
-                "  id serial,\n" +
-                "  series_id varchar(20),\n" +
-                "  year int,\n" +
-                "  period varchar(10)," +
-                "  value double precision," +
-                "  footnote_codes varchar(5) \n" +
+                "  en_id varchar(50),\n" +
+                "  en_series_id varchar(50),\n" +
+                "  en_year varchar(50),\n" +
+                "  en_period varchar(20)," +
+                "  en_value varchar(50)," +
+                "  footnote_codes varchar(20)," +
+                "   a_blockid integer," +
+                "   a_hashvalue integer," +
+                "   a_hashpoint \n" +
                 ");";
         getJdbcTemplate().execute(sql);
     }
 
 
 
-    public void insertEnItems(final List<JLRawData> jlRawDataList) {
+    public void insertItems(final List<EnJLData> jlRawDataList) {
         String sql = "insert into t_jldata (series_id,year,periof,value,footnote_codes) values(?,?,?,?,?) " +
                 "ON CONFLICT(id) DO UPDATE" +
                 " SET series_id=EXCLUDED.series_id, year=EXCLUDED.year,periof=EXCLUDED.periof," +
@@ -42,11 +58,9 @@ public class EnJLdataDao  extends Dao<JLRawData>{
         try {
             getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
-                    ps.setString(1,jlRawDataList.get(i).getSeries_id());
-                    ps.setInt(2,jlRawDataList.get(i).getYear());
-                    ps.setString(3,jlRawDataList.get(i).getPeriod());
-                    ps.setDouble(4,jlRawDataList.get(i).getValue());
-                    ps.setString(5,jlRawDataList.get(i).getFootnote_codes());
+
+
+                    //
                 }
 
                 public int getBatchSize() {
@@ -57,19 +71,19 @@ public class EnJLdataDao  extends Dao<JLRawData>{
             e.printStackTrace();
         }
     }
-    public void insertItem(JLRawData jlRawData){
+    public void insertItem(EnJLData enJ){
         String sql = " String sql = \"insert into t_jldata (series_id,year,periof,value,footnote_codes) values(?,?,?,?,?) \" +\n" +
                 "                \"ON CONFLICT(id) DO UPDATE\" +\n" +
                 "                \" SET series_id=EXCLUDED.series_id, year=EXCLUDED.year,periof=EXCLUDED.periof,\" +\n" +
                 "                \"   value=EXCLUDED.value, footnote_codes=EXCLUDED.footnote_codes;\"; ";
-        Object[] params = {jlRawData.getSeries_id(),jlRawData.getYear(),jlRawData.getPeriod(),jlRawData.getValue(),jlRawData.getFootnote_codes()};
+        Object[] params = {};
         getJdbcTemplate().update(sql, params);
     }
 
-    public List<JLRawData> getListById(String  id, int value){
+    public List<EnJLData> getListById(String  id, int value){
         String sql="select * from t_trade where "+id+"=?";
         Object []params=new Object[]{value};
-        final List<JLRawData> jLdataDaoList = new ArrayList<>();
+        final List<EnJLData> jLdataDaoList = new ArrayList<>();
         getJdbcTemplate().query(sql,params,new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
@@ -84,24 +98,22 @@ public class EnJLdataDao  extends Dao<JLRawData>{
         return jLdataDaoList;
     }
 
-    public List<JLRawData> getListByIdOPValue(String  id, int value,String op){
+    public List<EnJLData> getListByIdOPValue(String  id, int value,String op){
         String sql="select * from t_trade where "+id+op+"?";
         Object []params=new Object[]{value};
-        final List<JLRawData> trades = new ArrayList<>();
+        final List<EnJLData> trades = new ArrayList<>();
         getJdbcTemplate().query(sql,params,new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
-                JLRawData trade = new JLRawData();
 
-                trades.add(trade);
             }
         });
         return trades;
     }
 
-    public List<JLRawData> getList(){
+    public List<EnJLData> getList(){
         String sql = "select * from t_trade;";
-        final List<JLRawData> trades = new ArrayList<>();
+        final List<EnJLData> trades = new ArrayList<>();
         getJdbcTemplate().query(sql,new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
