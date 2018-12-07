@@ -1,12 +1,12 @@
 package ac.origination.project.Models;
 
-public class EnJLData {
+public class EnMPData {
     String en_id;
     String en_series_id;
     String en_year;
     String en_period;
     String en_value;
-    String footnote_codes;
+    String en_footnote_codes;
     int a_blockId;   //value 的
     int a_hashvalue; //value的
     int a_hashpoint;    //value的
@@ -51,12 +51,12 @@ public class EnJLData {
         this.en_value = en_value;
     }
 
-    public String getFootnote_codes() {
-        return footnote_codes;
+    public String getEn_footnote_codes() {
+        return en_footnote_codes;
     }
 
-    public void setFootnote_codes(String footnote_codes) {
-        this.footnote_codes = footnote_codes;
+    public void setEn_footnote_codes(String en_footnote_codes) {
+        this.en_footnote_codes = en_footnote_codes;
     }
 
     public int getA_blockId() {
@@ -82,5 +82,33 @@ public class EnJLData {
 
     public void setA_hashpoint(int a_hashpoint) {
         this.a_hashpoint = a_hashpoint;
+    }
+
+    @Override
+    public String toString() {
+        return "EnMPData{" +
+                "en_id='" + en_id + '\'' +
+                ", en_series_id='" + en_series_id + '\'' +
+                ", en_year='" + en_year + '\'' +
+                ", en_period='" + en_period + '\'' +
+                ", en_value='" + en_value + '\'' +
+                ", footnote_codes='" + en_footnote_codes + '\'' +
+                ", a_blockId=" + a_blockId +
+                ", a_hashvalue=" + a_hashvalue +
+                ", a_hashpoint=" + a_hashpoint +
+                '}';
+    }
+
+    public String toStringVery() {
+        return "EnMPData{" +
+                "en_id='" + en_id + '\'' +
+                ", en_series_id='" + en_series_id + '\'' +
+                ", en_year='" + en_year + '\'' +
+                ", en_period='" + en_period + '\'' +
+                ", en_value='" + en_value + '\'' +
+                ", footnote_codes='" + en_footnote_codes + '\'' +
+                ", a_blockId=" + a_blockId +
+                ", a_hashvalue=" + a_hashvalue +
+                '}';
     }
 }

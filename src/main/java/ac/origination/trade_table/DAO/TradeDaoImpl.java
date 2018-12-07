@@ -49,7 +49,7 @@ public class TradeDaoImpl extends Dao<Trade> {
             e.printStackTrace();
         }
     }
-    public void addTrade(Trade trade){
+    public void insertItem(Trade trade){
         String sql = "insert into t_trade (cost,date) values(?,?) ";
         Object[] params = {trade.getCost(),trade.getDate()};
         getJdbcTemplate().update(sql, params);

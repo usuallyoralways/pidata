@@ -45,7 +45,7 @@ public class GenetrateData {
             tradeList.add(trade);
 
         }
-        tradeDao.addTrades(tradeList);
+        tradeDao.insertItems(tradeList);
     }
     public static void main(String[] args){
         GenetrateData genetrateData= new GenetrateData();

@@ -34,6 +34,12 @@
         <property name="dataSource" ref="dataSource" />
     </bean>
 
+    <bean id="mpDataDao" class="ac.origination.project.Dao.MPdataDao" depends-on=" dataSource" init-method="initDatabase">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
 
+    <bean id="enMPDataDao" class="ac.origination.project.Dao.EnMPdataDao" depends-on=" dataSource" init-method="initDatabase">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
 
 </beans>

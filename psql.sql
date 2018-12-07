@@ -56,3 +56,13 @@ create table t_test_entrypt if not exists(
     a_hashvalue int;
     b_hashvalue int;
 );
+
+create TABLE public.t_mpdata
+(
+                id serial primary key,
+                series_id varchar(20),
+                year int,
+                period varchar(10),
+                value double precision,
+                footnote_codes varchar(5)
+);

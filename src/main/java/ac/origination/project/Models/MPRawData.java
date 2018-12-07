@@ -1,6 +1,6 @@
-package project.Models;
+package ac.origination.project.Models;
 //series_id	year	period	value	footnote_codes
-public class RawData {
+public class MPRawData {
     int id;
     String series_id;
     int year;
@@ -56,7 +56,20 @@ public class RawData {
         this.footnote_codes = footnote_codes;
     }
 
+    @Override
+    public String toString() {
+        return "MPRawData{" +
+                "id=" + id +
+                ", series_id='" + series_id + '\'' +
+                ", year=" + year +
+                ", period='" + period + '\'' +
+                ", value=" + value +
+                ", footnote_codes='" + footnote_codes + '\'' +
+                '}';
+    }
+
     public static void main(String args[]){
         System.out.println("hello");
     }
 }
+
