@@ -14,6 +14,17 @@ import java.util.List;
 public class MPdataDao extends Dao<MPRawData> {
     public void initDatabase() {
 
+        String sql=
+                "create TABLE if not exists public.t_mpdata\n" +
+                "(\n" +
+                "  id serial primary key,\n" +
+                "  series_id varchar(20),\n" +
+                "  year int,\n" +
+                "  period varchar(10)," +
+                "  value double precision," +
+                "  footnote_codes varchar(5) \n" +
+                ");";
+        getJdbcTemplate().execute(sql);
         //初始化数据库
     }
 
