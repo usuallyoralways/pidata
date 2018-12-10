@@ -21,7 +21,7 @@ public class EnMPdataDao extends Dao<EnMPData>{
                 "  en_year varchar(50),\n" +
                 "  en_period varchar(20)," +
                 "  en_value varchar(50)," +
-                "  footnote_codes varchar(20)," +
+                "  en_footnote_codes varchar(20)," +
                 "   a_blockid integer," +
                 "   a_hashvalue integer," +
                 "   a_hashpoint integer\n" +
@@ -40,7 +40,7 @@ public class EnMPdataDao extends Dao<EnMPData>{
                 "  en_year varchar(50),\n" +
                 "  en_period varchar(20)," +
                 "  en_value varchar(50)," +
-                "  footnote_codes varchar(20)," +
+                "  en_footnote_codes varchar(20)," +
                 "   a_blockid integer," +
                 "   a_hashvalue integer," +
                 "   a_hashpoint integer\n" +
@@ -51,11 +51,14 @@ public class EnMPdataDao extends Dao<EnMPData>{
 
 
     public void insertItems(final List<EnMPData> jlRawDataList) {
-        String sql = "insert into t_te_jldata (en_id,en_series_id,en_year,en_periof,en_value,en_footnote_codes,a_blockid,a_hashvalue,a_hashpoint) values(?,?,?,?,?,?,?,?) " +
+        String sql = "insert into t_te_mpdata" +
+                "(en_id,en_series_id,en_year,en_period,en_value,en_footnote_codes,a_blockid,a_hashvalue,a_hashpoint) " +
+                "values(?,?,?,?,?,?,?,?,?) " +
                 "ON CONFLICT(en_id) DO UPDATE" +
-                " SET en_id=EXCLUDED.series_id, en_series_id=EXCLUDED.en_series_id, en_year=EXCLUDED.en_year,en_period=EXCLUDED.en_period," +
+                " SET en_id=EXCLUDED.en_id, en_series_id=EXCLUDED.en_series_id," +
+                " en_year=EXCLUDED.en_year,en_period=EXCLUDED.en_period," +
                 "   en_value=EXCLUDED.en_value, en_footnote_codes=EXCLUDED.en_footnote_codes,a_blockid=EXCLUDED.a_blockid," +
-                "   a_hashvalue=EXCLUDED.a_hashvalue,a_hashpoint=EXCLUEDEB.a_hashpoint;";
+                "   a_hashvalue=EXCLUDED.a_hashvalue,a_hashpoint=EXCLUDED.a_hashpoint;";
         try {
             getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -81,18 +84,20 @@ public class EnMPdataDao extends Dao<EnMPData>{
         }
     }
     public void insertItem(EnMPData enJ){
-        String sql = "insert into t_te_jldata (en_id,en_series_id,en_year,en_period,en_value,en_footnote_codes,a_blockid,a_hashvalue,a_hashpoint) values(?,?,?,?,?,?,?,?) " +
+        String sql = "insert into t_te_mpdata(en_id,en_series_id,en_year,en_period,en_value,en_footnote_codes,a_blockid,a_hashvalue,a_hashpoint) " +
+                "values(?,?,?,?,?,?,?,?,?) " +
                 "ON CONFLICT(en_id) DO UPDATE" +
-                " SET en_id=EXCLUDED.series_id, en_series_id=EXCLUDED.en_series_id, en_year=EXCLUDED.en_year,en_period=EXCLUDED.en_period," +
+                " SET en_id=EXCLUDED.en_id, en_series_id=EXCLUDED.en_series_id, en_year=EXCLUDED." +
+                "en_year,en_period=EXCLUDED.en_period," +
                 "   en_value=EXCLUDED.en_value, en_footnote_codes=EXCLUDED.en_footnote_codes,a_blockid=EXCLUDED.a_blockid," +
-                "   a_hashvalue=EXCLUDED.a_hashvalue,a_hashpoint=EXCLUEDEB.a_hashpoint;";
+                "   a_hashvalue=EXCLUDED.a_hashvalue,a_hashpoint=EXCLUDED.a_hashpoint;";
         Object[] params = {enJ.getEn_id(),enJ.getEn_series_id(),enJ.getEn_year(),enJ.getEn_period(),enJ.getEn_value(),enJ.getEn_footnote_codes(),
                 enJ.getA_blockId(),enJ.getA_hashvalue(),enJ.getA_hashpoint()};
         getJdbcTemplate().update(sql, params);
     }
 
     public List<EnMPData> getListById(String  id, int value){
-        String sql="select * from t_te_jldata where "+id+"=?";
+        String sql="select * from t_te_mpdata where "+id+"=?";
         Object []params=new Object[]{value};
         final List<EnMPData> jLdataDaoList = new ArrayList<>();
         getJdbcTemplate().query(sql,params,new RowCallbackHandler() {
@@ -103,7 +108,7 @@ public class EnMPdataDao extends Dao<EnMPData>{
                 enMPData.setEn_series_id(rs.getString("en_series_id"));
                 enMPData.setEn_year(rs.getString("en_year"));
                 enMPData.setEn_period(rs.getString("en_period"));
-                enMPData.setEn_value(rs.getString(",en_value"));
+                enMPData.setEn_value(rs.getString("en_value"));
                 enMPData.setEn_footnote_codes(rs.getString("en_footnote_codes"));
                 enMPData.setA_hashvalue(rs.getInt("a_hashvalue"));
                 enMPData.setA_blockId(rs.getInt("a_blockid"));
@@ -115,28 +120,47 @@ public class EnMPdataDao extends Dao<EnMPData>{
     }
 
     public List<EnMPData> getListByIdOPValue(String  id, int value, String op){
-        String sql="select * from t_trade where "+id+op+"?";
+        String sql="select * from t_te_mpdata where "+id+op+"?";
         Object []params=new Object[]{value};
-        final List<EnMPData> trades = new ArrayList<>();
+        final List<EnMPData> jLdataDaoList = new ArrayList<>();
         getJdbcTemplate().query(sql,params,new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
-
+                EnMPData enMPData = new EnMPData();
+                enMPData.setEn_id(rs.getString("en_id"));
+                enMPData.setEn_series_id(rs.getString("en_series_id"));
+                enMPData.setEn_year(rs.getString("en_year"));
+                enMPData.setEn_period(rs.getString("en_period"));
+                enMPData.setEn_value(rs.getString("en_value"));
+                enMPData.setEn_footnote_codes(rs.getString("en_footnote_codes"));
+                enMPData.setA_hashvalue(rs.getInt("a_hashvalue"));
+                enMPData.setA_blockId(rs.getInt("a_blockid"));
+                enMPData.setA_hashpoint(rs.getInt("a_hashpoint"));
+                jLdataDaoList.add(enMPData);
             }
         });
-        return trades;
+        return jLdataDaoList;
     }
 
     public List<EnMPData> getList(){
-        String sql = "select * from t_trade;";
-        final List<EnMPData> trades = new ArrayList<>();
+        String sql = "select * from t_te_mpdata;";
+        final List<EnMPData> jLdataDaoList = new ArrayList<>();
         getJdbcTemplate().query(sql,new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
-                MPRawData trade = new MPRawData();
-
+                EnMPData enMPData = new EnMPData();
+                enMPData.setEn_id(rs.getString("en_id"));
+                enMPData.setEn_series_id(rs.getString("en_series_id"));
+                enMPData.setEn_year(rs.getString("en_year"));
+                enMPData.setEn_period(rs.getString("en_period"));
+                enMPData.setEn_value(rs.getString("en_value"));
+                enMPData.setEn_footnote_codes(rs.getString("en_footnote_codes"));
+                enMPData.setA_hashvalue(rs.getInt("a_hashvalue"));
+                enMPData.setA_blockId(rs.getInt("a_blockid"));
+                enMPData.setA_hashpoint(rs.getInt("a_hashpoint"));
+                jLdataDaoList.add(enMPData);
             }
         });
-        return trades;
+        return jLdataDaoList;
     }
 }

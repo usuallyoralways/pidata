@@ -66,3 +66,17 @@ create TABLE public.t_mpdata
                 value double precision,
                 footnote_codes varchar(5)
 );
+
+
+create TABLE if not exists public.t_te_mpdata
+                (
+                  en_id varchar(50) primary key,
+                  en_series_id varchar(50),
+                  en_year varchar(50),
+                  en_period varchar(20),
+                  en_value varchar(50),
+                  en_footnote_codes varchar(20),
+                   a_blockid integer,
+                   a_hashvalue integer,
+                   a_hashpoint integer
+                );

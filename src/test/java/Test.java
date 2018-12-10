@@ -14,27 +14,17 @@ public class Test {
 
 
     public static void main(String args[]) {
-        Connection c = null;
-        try {
-            Class.forName("org.postgresql.Driver");
-            c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/tpch",
-                            "admin", "admin");
-            Statement stmt = c.createStatement();
-            String sql = "\n" +
-                    "select b_hashvalue from t_te_entrypt where b!='ThisIsBFalseData' order by b_blockid,b_hashvalue;";
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()){
-                int dd = rs.getInt("b_hashvalue");
-                System.out.print(dd+",");
-            }
+        int beishu=126;
+        Double firstValue=82.677;
+        double acc=0.001;
+        Double shu= (beishu*100+firstValue*100*((int)(1/acc)))/(((int)(1/(acc)))*100);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-            System.exit(0);
-        }
-        System.out.println("Opened database successfully");
+        System.out.println(shu);
+        System.out.println((((int)(1/(acc)))*100));
+        System.out.println(beishu*100+firstValue*100*((int)(1/acc)));
+        System.out.println(firstValue*100*((int)(1/acc)));
+
+
     }
 
 };
