@@ -113,16 +113,17 @@ public class MPdataDao extends Dao<MPRawData> {
     }
 
     public List<MPRawData> getList(){
-        String sql = "select * from t_mpdata;";
-        final List<MPRawData> trades = new ArrayList<>();
+        String sql = "select * from t_mpdata order by value;";
+        final List<MPRawData> mpRawDataArrayList = new ArrayList<>();
         getJdbcTemplate().query(sql,new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
-                MPRawData trade = new MPRawData();
-
+                MPRawData mpRawData = new MPRawData();
+                mpRawData.setValue(rs.getDouble("value"));
+                mpRawDataArrayList.add(mpRawData);
             }
         });
-        return trades;
+        return mpRawDataArrayList;
     }
 
 }

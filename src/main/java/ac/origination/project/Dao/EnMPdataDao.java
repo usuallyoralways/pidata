@@ -97,7 +97,7 @@ public class EnMPdataDao extends Dao<EnMPData>{
     }
 
     public List<EnMPData> getListById(String  id, int value){
-        String sql="select * from t_te_mpdata where "+id+"=?";
+        String sql="select * from t_te_mpdata where "+id+"=? order by a_hashvalue;";
         Object []params=new Object[]{value};
         final List<EnMPData> jLdataDaoList = new ArrayList<>();
         getJdbcTemplate().query(sql,params,new RowCallbackHandler() {
