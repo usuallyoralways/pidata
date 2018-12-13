@@ -44,15 +44,24 @@ public class Main {
             for (BlockInfo item : EnMPDataSubmit.valueBlockId.getBlockInfoList()){
                 ids.add(item.getId());
             }
+
+
+            System.out.println(ids.get(ids.size()-1));
+
+            int sum=0;
+            int i=0;
             for(Integer id: ids){
                 List<EnMPData> enMPDataList= enMPDataDao.getListById("a_blockid",id);
                 for (EnMPData item: enMPDataList) {
                     if (!item.getEn_series_id().equals("ThisIsAFalseData")){
                         writer.write(String.valueOf(item.getA_hashvalue())+",\n");
+                        sum++;
                     }
                 }
 
             }
+
+            System.out.println(sum);
 
             writer.close();
         }catch (Exception e){

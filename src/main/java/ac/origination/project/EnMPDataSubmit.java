@@ -19,7 +19,7 @@ import java.util.List;
 
 public class EnMPDataSubmit implements DataSubmit {
     public static int enIdofFalse = -1;
-    static int delatFalseHash=1;
+    static int delatFalseHash=1234;
     ApplicationContext applicationContext;
     MPdataDao mPdataDao;
     EnMPdataDao enMPdataDao;
@@ -87,6 +87,13 @@ public class EnMPDataSubmit implements DataSubmit {
                 }
 
                 enMPDataList.get(0).setA_hashpoint(hashValue.getHashValue(enMPDataList.get(enMPDataList.size() - 1).toStringVery()));
+            }
+
+            int sum=0;
+            int hash=hashValue.getHashValue(String.valueOf(mpRawData.getValue()));
+            for (EnMPData item: enMPDataList) {
+                sum+=hash;
+                item.setA_hashvalue(sum);
             }
             mptime2 = System.currentTimeMillis();
             processTime += mptime2 - mptime1;
