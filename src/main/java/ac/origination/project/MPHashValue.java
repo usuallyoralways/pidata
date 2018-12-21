@@ -1,5 +1,6 @@
 package ac.origination.project;
 
+import ac.common.HashValue;
 import ac.origination.trade_table.HMacMD5;
 import org.apache.commons.codec.binary.Base64;
 
@@ -63,7 +64,7 @@ public class MPHashValue implements ac.common.HashValue {
 
     public  int getHashValue(String data) {
         try{
-            return byteArrayToInt(encryptHMAC(data.getBytes(),key))%100000;
+            return byteArrayToInt(encryptHMAC(data.getBytes(),key))%985;
         }catch (Exception e){
             return -1;
 
@@ -71,12 +72,12 @@ public class MPHashValue implements ac.common.HashValue {
     }
 
     public static void main(String[] args) throws Exception{
-        String str="340";
-        HMacMD5 hm = new HMacMD5();
+        String str="-0.2";
+        HashValue hm = new MPHashValue();
         Random rm= new Random();
-        for (int i = 0; i < 340; i++) {
-            System.out.println(hm.getHashValue(String.valueOf(i)));
-        }
+
+            System.out.println(hm.getHashValue(String.valueOf(str)));
+
 
     }
 }
