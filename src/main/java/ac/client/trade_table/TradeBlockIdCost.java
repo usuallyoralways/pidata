@@ -7,12 +7,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TradeBlockIdCost extends BlockId implements Serializable{
+public class TradeBlockIdCost extends BlockId<Double> implements Serializable{
     private static final long serialVersionUID = 8683452581334592189L;
     @Override
-    public int blockIdFunction(String data) {
+    public int blockIdFunction(Double data) {
         try {
-            return (int) ((Double.valueOf(data) - Parameters.COST_MIN) / ((Parameters.COST_MAX - Parameters.COST_MIN) / (double) Parameters.COST_N));
+            return (int) ((data - Parameters.COST_MIN) / ((Parameters.COST_MAX - Parameters.COST_MIN) / (double) Parameters.COST_N));
         }catch (NumberFormatException e){
             System.out.println(e.toString());
             return -1;
@@ -35,7 +35,7 @@ public class TradeBlockIdCost extends BlockId implements Serializable{
             return blockId-1;
     }
 
-    public List<Integer> blockIdGetRange(String left, String right){
+    public List<Integer> blockIdGetRange(Double left, Double right){
         List<Integer> results= new ArrayList<>();
         int lid= blockIdFunction(left);
         int rlid=blockIdFunction(right);
@@ -43,17 +43,18 @@ public class TradeBlockIdCost extends BlockId implements Serializable{
             results.add(i);
         }
         return results;
-    };
+    }
 
-    public int beiShu(Object object){
-        Double fistValue = (Double) getFistValueInId(blockIdFunction(String.valueOf(object)));
-        if (((Double)object).equals(fistValue))
+    public int beiShu(Double object){
+        Double fistValue = getFistValueInId(blockIdFunction(object));
+        if ((object).equals(fistValue))
             return 0;
-        return (int) ((((Double)object) - fistValue) / Parameters.COST_ACC);
+
+        return (int) (((object) - fistValue) / Parameters.COST_ACC);
     }
 
     @Override
-    public Object getFistValueInId(int blockId){
+    public Double getFistValueInId(int blockId){
         return blockId*10000.0;
     }
 

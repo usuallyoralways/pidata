@@ -3,12 +3,12 @@ package ac.origination.trade_table;
 import ac.common.BlockId;
 import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
-public class TradeBlockIdCost extends BlockId {
+public class TradeBlockIdCost extends BlockId <Double>{
 
     @Override
-    public int blockIdFunction(String data) {
+    public int blockIdFunction(Double data) {
         try {
-            return (int) ((Double.valueOf(data) - Parameters.COST_MIN) / ((Parameters.COST_MAX - Parameters.COST_MIN) / (double) Parameters.COST_N));
+            return (int) ((data - Parameters.COST_MIN) / ((Parameters.COST_MAX - Parameters.COST_MIN) / (double) Parameters.COST_N));
         }catch (NumberFormatException e){
             System.out.println(e.toString());
             return -1;
@@ -17,22 +17,25 @@ public class TradeBlockIdCost extends BlockId {
 
     @Override
     public int getNextBlockId(int blockId) {
-        if (blockId==Parameters.COST_LASTID)
-            return super.getNextBlockId(blockId);
-        else
-            return blockId+1;
+        return (blockId+1)%(Parameters.COST_LASTID+1);
+    }
+
+    @Override
+    public int beiShu(Double value) {
+        int bid=blockIdFunction(value);
+        Double fistValue = getFistValueInId(bid);
+        if (value.equals(fistValue))
+            return 0;
+        return (int) ((value - fistValue) / Parameters.COST_ACC);
     }
 
     @Override
     public int getLastBlockId(int blockId) {
-        if (blockId==Parameters.COST_FIRSTID)
-            return super.getNextBlockId(blockId);
-        else
-            return blockId-1;
+       return (blockId-1+Parameters.COST_LASTID+1)%(Parameters.COST_LASTID+1);
     }
 
     @Override
-    public Object getFistValueInId(int blockId){
+    public Double getFistValueInId(int blockId){
         
         return (blockId*Parameters.COST_MAX/(Parameters.COST_N)*1.0);
     }

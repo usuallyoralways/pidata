@@ -38,7 +38,7 @@ public class TradeDaoImpl extends Dao<Trade> {
             getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
                     ps.setDouble(1,trades.get(i).getCost());
-                    ps.setDate(2, new java.sql.Date((trades.get(i).getDate().getTime())));
+                    ps.setString(2,(trades.get(i).getDate()));
                 }
 
                 public int getBatchSize() {
@@ -65,7 +65,7 @@ public class TradeDaoImpl extends Dao<Trade> {
                 Trade trade = new Trade();
                 trade.setTno(rs.getInt("tno"));
                 trade.setCost(rs.getDouble("cost"));
-                trade.setDate(rs.getDate("date"));
+                trade.setDate(rs.getString("date"));
                 trades.add(trade);
             }
         });
@@ -82,7 +82,7 @@ public class TradeDaoImpl extends Dao<Trade> {
                 Trade trade = new Trade();
                 trade.setTno(rs.getInt("tno"));
                 trade.setCost(rs.getDouble("cost"));
-                trade.setDate(rs.getDate("date"));
+                trade.setDate(rs.getString("date"));
                 trades.add(trade);
             }
         });
@@ -98,7 +98,7 @@ public class TradeDaoImpl extends Dao<Trade> {
                 Trade trade = new Trade();
                 trade.setTno(rs.getInt("tno"));
                 trade.setCost(rs.getDouble("cost"));
-                trade.setDate(rs.getDate("date"));
+                trade.setDate(rs.getString("date"));
                 trades.add(trade);
             }
         });

@@ -18,6 +18,8 @@ public class EnTrade {
     int a_hashpoint;
     int b_hashpoint;
 
+
+
     public int getA_hashpoint() {
         return a_hashpoint;
     }

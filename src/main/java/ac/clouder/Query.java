@@ -3,8 +3,7 @@ package ac.clouder;
 import ac.client.QueryInput;
 import ac.client.trade_table.HMacMD5;
 import ac.client.trade_table.TradeBlockIdCost;
-import ac.client.trade_table.TradeQueryInput;
-import ac.clouder.trade_table.DAO.CEnTradeDaoImpl;
+import ac.client.trade_table.TradeQueryInputId;
 import ac.clouder.trade_table.DAO.Model.EnTrade;
 import ac.clouder.trade_table.EnTradeQuery;
 import ac.common.BlockId;
@@ -12,7 +11,6 @@ import ac.common.HashValue;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Query<T> {
@@ -43,7 +41,7 @@ public class Query<T> {
 
     public static void main(String[] args){
         Query<EnTrade> query = new EnTradeQuery();
-        QueryInput queryInput= new TradeQueryInput(Double.valueOf(1),Double.valueOf(800000));
+        QueryInput queryInput= new TradeQueryInputId(1,100000);
         HashValue hv= new HMacMD5();
         BlockId bd= new TradeBlockIdCost();
         queryInput.setHv(hv);

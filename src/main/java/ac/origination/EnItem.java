@@ -7,7 +7,7 @@ import ac.common.HashValue;
 /**
  * Created by lijun on 2018/10/6.
  */
-public class EnItem extends EnItemString{
+public class EnItem<T> extends EnItemString{
     int blockId;
     int hashValue;
 
@@ -16,8 +16,10 @@ public class EnItem extends EnItemString{
 
 
 
-    public void setEnItem(String data){
-        super.setEnItem(data);
+
+
+
+    public void setBlockId(){
         blockId=bd.blockIdFunction(data);
 //        hashValue= hv.getHashValue(data);
     }

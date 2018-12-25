@@ -138,4 +138,22 @@ public class ValueBlockId extends BlockId<Double> {
         return 0.0;
     }
 
+    public Double getLeftLimit(int blockId){
+        for (BlockInfo<Double> item:blockInfoList) {
+            if (item.getId()==blockId){
+                return item.getLeftValue();
+            }
+        }
+        return 0.0;
+    }
+    public Double getRightLimit(int blockId){
+        for (BlockInfo<Double> item:blockInfoList) {
+            if (item.getId()==blockId){
+                return item.getRightValue();
+            }
+        }
+        return 0.0;
+    }
+
+
 }

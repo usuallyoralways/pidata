@@ -386,8 +386,8 @@ public class EnTradeDataSubmit implements DataSubmit {
         //  a or b
         time1=System.currentTimeMillis();
         Trade trade = (Trade) object;
-        int aid = new TradeBlockIdTno().blockIdFunction(String.valueOf(trade.getTno()));
-        int bid = new TradeBlockIdCost().blockIdFunction(String.valueOf(trade.getCost()));
+        int aid = new TradeBlockIdTno().blockIdFunction(trade.getTno());
+        int bid = new TradeBlockIdCost().blockIdFunction(trade.getCost());
         time2=System.currentTimeMillis();
         timeProcess+=time2-time1;
 

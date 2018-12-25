@@ -2,14 +2,15 @@ package ac.client;
 
 import ac.client.trade_table.HMacMD5;
 import ac.client.trade_table.TradeBlockIdCost;
-import ac.client.trade_table.TradeQueryInput;
+import ac.client.trade_table.TradeQueryInputId;
 import ac.common.BlockId;
 import ac.common.HashValue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class QueryInput<T> implements Serializable {
+public class QueryInput<T> implements Serializable  {
 
     private static final long serialVersionUID = 8683452581334592189L;
 
@@ -24,6 +25,20 @@ public class QueryInput<T> implements Serializable {
     protected int lastHashBS;
     protected HashValue hv;
     protected BlockId bd;
+    List<Integer> range;
+
+
+    public List<Integer> getRange() {
+        return range;
+    }
+
+    public void setRange(){
+        range=this.bd.blockIdGetRange(leftValue,rightValue);
+    }
+
+    public void setRange(List<Integer> range) {
+        this.range = this.bd.blockIdGetRange(String.valueOf(leftValue),String.valueOf(rightValue));
+    }
 
     public BlockId getBd() {
         return bd;
@@ -47,6 +62,10 @@ public class QueryInput<T> implements Serializable {
 
     public void setLeftValue(T leftValue) {
         this.leftValue = leftValue;
+    }
+
+    public void setLeftValue() {
+        ;
     }
 
     public T getRightValue() {
@@ -116,11 +135,19 @@ public class QueryInput<T> implements Serializable {
 
 
     public void setIds() {
-        this.ids = ids;
+
+        this.ids=new ArrayList();
+        if (range.size()>1){
+            for (int i = 1; i <range.size()-1 ; i++) {
+                ids.add(range.get(i));
+            }
+        }
     }
 
     //在输入leftvalue 和rightvalue 和bd 和hv后得到
     public void init(){
+
+        setRange();
         setIds();
         setFirstHash();
         setFirstHashBS();
@@ -135,39 +162,43 @@ public class QueryInput<T> implements Serializable {
         return "QueryInput{" +
                 "leftValue=" + leftValue +
                 ", rightValue=" + rightValue +
-                ", ids=" + ids +
                 ", fistId=" + fistId +
                 ", firstHash=" + firstHash +
                 ", firstHashBS=" + firstHashBS +
                 ", lastId=" + lastId +
                 ", lastHash=" + lastHash +
                 ", lastHashBS=" + lastHashBS +
-                ", hv=" + hv +
-                ", bd=" + bd +
+                ", \nsrange=" + range +
+                ", \nids=" + ids +
                 '}';
     }
 
     public void setFirstId() {
-        this.fistId = this.bd.blockIdFunction(String.valueOf(leftValue));
+        this.fistId =this.range.get(0);
     }
 
     public void setFirstHash() {
+
         this.firstHash = hv.getHashValue(String.valueOf(leftValue));
     }
 
 
     public void setFirstHashBS() {
+
         this.firstHashBS=bd.beiShu(leftValue);
     }
 
 
     public void setLastId() {
-        this.lastId = this.bd.blockIdFunction(String.valueOf(rightValue));
+
+        this.lastId = this.range.get(this.range.size()-1);
     }
 
 
     public void setLastHash() {
+
         this.lastHash = hv.getHashValue(String.valueOf(rightValue));
+
     }
 
     public QueryInput(){}
@@ -179,17 +210,19 @@ public class QueryInput<T> implements Serializable {
 
 
     public void setLastHashBS() {
+
         this.lastHashBS = bd.beiShu(rightValue);
     }
 
     public static void main(String[] args){
-        QueryInput qi= new TradeQueryInput(Double.valueOf(1),Double.valueOf(800000));
+        QueryInput qi= new TradeQueryInputId(1,80000);
         HashValue hv= new HMacMD5();
         BlockId bd= new TradeBlockIdCost();
         qi.setHv(hv);
         qi.setBd(bd);
         qi.init();
         System.out.println(qi);
+
     }
 
 }

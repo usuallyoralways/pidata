@@ -80,3 +80,18 @@ create TABLE if not exists public.t_te_mpdata
                    a_hashvalue integer,
                    a_hashpoint integer
                 );
+
+
+create table if not exists t_te_entrypt (
+                a varchar(50),
+                a_blockid int,
+                a_hashvalue int,
+                a_flag int,
+                b varchar(100),
+                b_blockid int,
+                b_hashvalue int,
+                c varchar(50),
+                a_hashpoint int,
+                b_hashpoint int,
+                primary key(a)
+                );

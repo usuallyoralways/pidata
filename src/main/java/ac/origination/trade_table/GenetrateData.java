@@ -41,7 +41,7 @@ public class GenetrateData {
 
             Trade trade= new Trade();
             trade.setCost(tempcost);
-            trade.setDate(new Date());
+            trade.setDate("2018-12-25");
             tradeList.add(trade);
 
         }

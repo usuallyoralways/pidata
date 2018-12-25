@@ -42,4 +42,10 @@
         <property name="dataSource" ref="dataSource" />
     </bean>
 
+
+
+    <bean id="cEnTradeDao" class="ac.client.trade_table.Dao.CEnTradeDao" depends-on=" dataSource" init-method="initDatabase">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
 </beans>

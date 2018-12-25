@@ -2,6 +2,7 @@ package ac.origination.project;
 
 import ac.common.HashValue;
 import ac.common.endecrpyt.DES;
+import ac.origination.BlockInfo;
 import ac.origination.DataSubmit;
 import ac.origination.EnItem;
 import ac.origination.EnItemString;
@@ -47,6 +48,23 @@ public class EnMPDataSubmit implements DataSubmit {
             insertEnItem(mpRawDataList.get(0));
         }
 
+
+        for (BlockInfo<Double> item:valueBlockId.getBlockInfoList()) {
+            MPRawData temp=new MPRawData();
+            temp.setId(enIdofFalse);
+            enIdofFalse--;
+            EnMPData tempEnData = getFistHandle(temp);
+            tempEnData.setEn_value(DES.encryptBasedDes(String.valueOf(item.getLeftValue())));
+            tempEnData.setEn_series_id(DES.encryptBasedDes(String.valueOf(item.getRightValue())));
+            tempEnData.setA_blockId(enIdofFalse);
+            tempEnData.setEn_footnote_codes(DES.encryptBasedDes(String.valueOf(item.getAcc())));
+            tempEnData.setEn_period(DES.encryptBasedDes(String.valueOf(item.getId())));
+            enMPdataDao.insertItem(tempEnData);
+
+
+        }
+
+
         System.out.println("process time:\t" + processTime);
         System.out.println("enanddetime:\t" + enanddeTime);
         System.out.println("readandIotime:\t" + readInTime);
@@ -70,12 +88,16 @@ public class EnMPDataSubmit implements DataSubmit {
 //        System.out.println("raw data:\t"+mpRawData.toString());
 //        System.out.println("ent data:\t"+enMPData.toString());
         mptime2 = System.currentTimeMillis();
+        int A_blockid = enMPData.getA_blockId();
         enanddeTime += mptime2 - mptime1;
         List<EnMPData> enMPDataList = enMPdataDao.getListById("a_blockid", enMPData.getA_blockId());
+
+//
+
         mptime1 = System.currentTimeMillis();
         readInTime += mptime1 - mptime2;
 
-        int A_blockid = enMPData.getA_blockId();
+
         if (valueBlockId.getAcc(A_blockid).equals(0.0)) {
 
             enMPDataList.add(enMPData);

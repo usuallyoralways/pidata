@@ -8,6 +8,15 @@ public class MPRawData {
     double value;
     String footnote_codes;
 
+    public MPRawData(){
+        id=0;
+        series_id="1";
+        year=2000;
+        value=0.0;
+        footnote_codes="no";
+        period="no";
+    }
+
     public int getId() {
         return id;
     }

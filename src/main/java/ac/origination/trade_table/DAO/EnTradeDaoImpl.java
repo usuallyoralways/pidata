@@ -67,7 +67,7 @@ public class EnTradeDaoImpl extends Dao {
 
     public void insertEnItems(final List<EnTrade> enTrades) {
         String sql = "insert into t_te_entrypt (a,a_blockid,a_hashvalue,  b,b_blockid,b_hashvalue,c,a_flag,a_hashpoint,b_hashpoint ) values(?,?,?,?,?,?,?,?,?,?)" +
-                " ON CONFLICT (a_blockid,a_hashvalue) DO UPDATE " +
+                " ON CONFLICT (a) DO UPDATE " +
                 " SET a=EXCLUDED.a, b = EXCLUDED.b," +
                 " b_blockid = EXCLUDED.b_blockid, b_hashvalue = EXCLUDED.b_hashvalue," +
                 " c = EXCLUDED.c,a_flag=EXCLUDED.a_flag," +
@@ -149,6 +149,39 @@ public class EnTradeDaoImpl extends Dao {
         });
         return enTrades;
     }
+
+
+    public List<EnTrade> getListById(String id, String value) {
+
+        String sql = "select *  from t_te_entrypt where " + id + "=?";
+        if (id.equals("a_blockid")){
+            sql+=" order by a_hashvalue asc;";
+        }else if(id.equals("b_blockid")){
+            sql+=" order by b_hashvalue asc;";
+        }
+
+        Object[] params = new Object[]{value};
+        final List<EnTrade> enTrades = new ArrayList<>();
+        getJdbcTemplate().query(sql, params, new RowCallbackHandler() {
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+                EnTrade enTrade = new EnTrade();
+                enTrade.setA(rs.getString("a"));
+                enTrade.setA_blockid(rs.getInt("a_blockid"));
+                enTrade.setA_hashvalue(rs.getInt("a_hashvalue"));
+                enTrade.setB(rs.getString("b"));
+                enTrade.setB_blockid(rs.getInt("b_blockid"));
+                enTrade.setB_hashvalue(rs.getInt("b_hashvalue"));
+                enTrade.setC(rs.getString("c"));
+                enTrade.setA_flag(rs.getBoolean("a_flag"));
+                enTrade.setA_hashpoint(rs.getInt("a_hashpoint"));
+                enTrade.setB_hashpoint(rs.getInt("b_hashpoint"));
+                enTrades.add(enTrade);
+            }
+        });
+        return enTrades;
+    }
+
 
     public List<EnTrade> getList(){
         String sql = "select * from t_te_entrypt;";

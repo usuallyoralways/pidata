@@ -6,19 +6,18 @@ import ac.origination.trade_table.Parameters;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TradeBlockIdTno extends BlockId {
+public class TradeBlockIdTno extends BlockId<Integer> {
 
-    public int blockIdFunction(String data) {
+    public int blockIdFunction(Integer data) {
         try {
-
-            return (int) ((Double.valueOf(data) - Parameters.TNO_MIN) / ((Parameters.TNO_MAX - Parameters.TNO_MIN) / (double) Parameters.TNO_N));
+            return (int) ((data - Parameters.TNO_MIN) / ((Parameters.TNO_MAX - Parameters.TNO_MIN) / Parameters.TNO_N));
         }catch (NumberFormatException e){
             System.out.println(e.toString());
             return -1;
         }
     }
 
-    public List<Integer> blockIdGetRange(String left, String right){
+    public List<Integer> blockIdGetRange(Integer left, Integer right){
         List<Integer> results= new ArrayList<>();
         int lid= blockIdFunction(left);
         int rlid=blockIdFunction(right);
@@ -36,6 +35,8 @@ public class TradeBlockIdTno extends BlockId {
             return blockId+1;
     }
 
+
+
     @Override
     public int getLastBlockId(int blockId) {
         if (blockId==Parameters.TNO_FIRSTID)
@@ -43,8 +44,13 @@ public class TradeBlockIdTno extends BlockId {
         else
             return blockId-1;
     }
-    public Object getFistValueInId(int blockId){
+    public Integer getFistValueInId(int blockId){
         return 10*blockId;
     }
 
+    @Override
+    public int beiShu(Integer object) {
+
+        return object-getFistValueInId(blockIdFunction(object));
+    }
 }

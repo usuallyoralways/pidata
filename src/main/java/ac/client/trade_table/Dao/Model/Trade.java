@@ -6,14 +6,14 @@ import java.util.Date;
 public class Trade {
     int tno;
     double cost;
-    Date date;
+    String date;
 
 
     public Trade(){
 
     }
 
-    public Trade(int tno, double cost, Date date) {
+    public Trade(int tno, double cost, String date) {
         this.tno = tno;
         this.cost = cost;
         this.date = date;
@@ -35,11 +35,11 @@ public class Trade {
         this.cost = cost;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

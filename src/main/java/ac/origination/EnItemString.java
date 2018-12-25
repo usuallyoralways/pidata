@@ -4,16 +4,16 @@ import ac.common.endecrpyt.DES;
 
 //加密的信息
 
-public class EnItemString {
+public class EnItemString<T> {
     String enItem;
-    String data;
+    T data;
     public String getEnItem() {
         return enItem;
     }
 
-    public void setEnItem(String data) {
+    public void setEnItem(T data) {
         this.data=data;
-        enItem= DES.encryptBasedDes(data);
+        enItem= DES.encryptBasedDes(String.valueOf(data));
     }
     @Override
     public String toString() {

@@ -31,7 +31,6 @@ public class HMacMD5 implements HashValue,Serializable
      * @throws Exception
      */
     public static byte[] encryptHMAC(byte[] data, String key) throws Exception {
-
         SecretKey secretKey = new SecretKeySpec(key.getBytes(), KEY_MAC);
         Mac mac = Mac.getInstance(secretKey.getAlgorithm());
         mac.init(secretKey);

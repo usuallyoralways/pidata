@@ -10,9 +10,29 @@ public class EnTrade {
     String b;
     int b_blockid;
     int b_hashvalue;
-    Date c;
+    String c;
     boolean a_flag;
 
+    int a_hashpoint;
+    int b_hashpoint;
+
+
+
+    public int getA_hashpoint() {
+        return a_hashpoint;
+    }
+
+    public void setA_hashpoint(int a_hashpoint) {
+        this.a_hashpoint = a_hashpoint;
+    }
+
+    public int getB_hashpoint() {
+        return b_hashpoint;
+    }
+
+    public void setB_hashpoint(int b_hashpoint) {
+        this.b_hashpoint = b_hashpoint;
+    }
 
     public boolean isA_flag() {
         return a_flag;
@@ -28,7 +48,7 @@ public class EnTrade {
 
     }
 
-    public EnTrade(String a, int a_blockid, int a_hashvalue, String b, int b_blockid, int b_hashvalue, Date c) {
+    public EnTrade(String a, int a_blockid, int a_hashvalue, String b, int b_blockid, int b_hashvalue, String c) {
         this.a = a;
         this.a_blockid = a_blockid;
         this.a_hashvalue = a_hashvalue;
@@ -86,11 +106,11 @@ public class EnTrade {
         this.b_hashvalue = b_hashvalue;
     }
 
-    public Date getC() {
+    public String getC() {
         return c;
     }
 
-    public void setC(Date c) {
+    public void setC(String c) {
         this.c = c;
     }
 
@@ -103,8 +123,10 @@ public class EnTrade {
                 ", b='" + b + '\'' +
                 ", b_blockid=" + b_blockid +
                 ", b_hashvalue=" + b_hashvalue +
-                ", c=" + c +
+                ", c='" + c + '\'' +
                 ", a_flag=" + a_flag +
+                ", a_hashpoint=" + a_hashpoint +
+                ", b_hashpoint=" + b_hashpoint +
                 '}';
     }
 }
