@@ -24,6 +24,9 @@ public class NewEnTradeSubmit implements DataSubmit {
     static int ablockid = -1;
     long time1;
     long time2;
+    static int addFalse=1234;
+    static int FALSESHU=-1;
+
     EnTrade enTrade;
     Logger logger = Logger.getLogger(ac.origination.trade_table.EnTradeDataSubmit.class.getName());
 
@@ -59,55 +62,81 @@ public class NewEnTradeSubmit implements DataSubmit {
             return ret;
         }
 
-        List<Trade> tradeList = new ArrayList<>();
-        Trade tempTrade = new Trade();
+        List<inerCalssTno> inerCalssTnos = new ArrayList<>();
+
         for (int i = 0; i < enTrades.size(); i++) {
-            tempTrade.setTno(Integer.valueOf(DES.decryptBasedDes(enTrades.get(i).getA())));
-            tempTrade.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(i).getB())));
-            tempTrade.setDate((DES.decryptBasedDes(enTrades.get(i).getB())));
-            tradeList.add(tempTrade);
+
+            inerCalssTno temp= new inerCalssTno();
+            temp.setEnTrade(enTrades.get(i));
+            temp.setTno(Integer.valueOf(DES.decryptBasedDes(enTrades.get(i).getA())));
+
+            inerCalssTnos.add(temp);
         }
 
+
+
         int fisrtpoint = 0;
-        if (trade.getTno() < tradeList.get(0).getTno()) {
+        if (trade.getTno() < inerCalssTnos.get(0).getTno()) {
             ret = 0;
-            List<Trade> trades = new ArrayList<>();
-            trades.add(trade);
-            trades.addAll(tradeList);
-            tradeList = trades;
-        } else if (trade.getTno() > tradeList.get(tradeList.size() - 1).getTno()) {
+
+            List<inerCalssTno> inerCalssTnoList = new ArrayList<>();
+
+            inerCalssTno inerCalssTno=new inerCalssTno();
+            inerCalssTno.setEnTrade(getFistHandle(trade));
+            inerCalssTno.setTno(trade.getTno());
+
+            inerCalssTnoList.add(inerCalssTno);
+
+            inerCalssTnoList.addAll(inerCalssTnos);
+            inerCalssTnos.clear();
+            inerCalssTnos.addAll(inerCalssTnoList);
+
+
+        } else if (trade.getTno() > inerCalssTnos.get(inerCalssTnos.size() - 1).getTno()) {
             ret = 1;
-            tradeList.add(trade);
+            enTrades.add(getFistHandle(trade));
+
+            inerCalssTno inerCalssTno=new inerCalssTno();
+            inerCalssTno.setEnTrade(getFistHandle(trade));
+            inerCalssTno.setTno(trade.getTno());
+            inerCalssTnos.add(inerCalssTno);
+
             fisrtpoint = enTrades.get(0).getA_hashpoint();
         } else {
             fisrtpoint = enTrades.get(0).getA_hashpoint();
-            tradeList.add(trade);
-            Collections.sort(tradeList, new Comparator<Trade>() {
+
+            inerCalssTno inerCalssTno=new inerCalssTno();
+            inerCalssTno.setEnTrade(getFistHandle(trade));
+            inerCalssTno.setTno(trade.getTno());
+            inerCalssTnos.add(inerCalssTno);
+            Collections.sort(inerCalssTnos, new Comparator<inerCalssTno>() {
                 @Override
-                public int compare(Trade o1, Trade o2) {
-                    return o1.getTno() - o2.getTno();
+                public int compare(inerCalssTno o1, inerCalssTno o2) {
+                    return o1.getTno()-o2.getTno();
                 }
             });
             ret = 3;
         }
+        System.out.println("ddddd"+inerCalssTnos.size());
 
         List<EnTrade> results = new ArrayList<>();
-        int hashvalue = hv.getHashValue(String.valueOf(tradeList.get(0).getTno()));
-        EnTrade temp = getFistHandle(tradeList.get(0));
+        int hashvalue = hv.getHashValue(String.valueOf(inerCalssTnos.get(0).getTno()));
+        EnTrade temp = inerCalssTnos.get(0).getEnTrade();
         temp.setA_hashvalue(hashvalue);
         temp.setA_hashpoint(fisrtpoint);
         results.add(temp);
         int sum = hashvalue;
-        for (int i = 1; i < tradeList.size(); i++) {
-            hashvalue = hv.getHashValue(String.valueOf(tradeList.get(i).getTno()));
-            EnTrade temp1 = getFistHandle(tradeList.get(i));
+        for (int i = 1; i < inerCalssTnos.size(); i++) {
+            hashvalue = hv.getHashValue(String.valueOf(inerCalssTnos.get(i).getTno()));
+            EnTrade temp1 = inerCalssTnos.get(i).getEnTrade();
             sum += hashvalue;
             temp1.setA_hashvalue(sum);
-            temp1.setA_hashpoint(hv.getHashValue(tradeList.get(i).toString() + tradeList.get(i - 1)));
+            temp1.setA_hashpoint(hv.getHashValue(inerCalssTnos.get(i).getEnTrade().toString() + inerCalssTnos.get(i - 1).getEnTrade()));
             results.add(temp1);
         }
         enTrades.clear();
         enTrades.addAll(results);
+
         return ret;
     }
 
@@ -124,14 +153,17 @@ public class NewEnTradeSubmit implements DataSubmit {
         enTrade.setA_blockid(enItem.getBlockId());
         enTrade.setA_hashvalue(0);
 
-        EnItem<Double> enItem1 = new EnItem<Double>();
+        EnItem enItem1 = new EnItem<Double>();
         TradeBlockIdCost ttt1 = new TradeBlockIdCost();
         enItem1.setBd(ttt1);
         enItem1.setEnItem(trade.getCost());
 
 
-        enTrade.setB(enItem1.getEnItem());
+//        enTrade.setB(enItem1.getEnItem());
+        enTrade.setB(String.valueOf(trade.getCost()));
+
         enTrade.setB_blockid(enItem1.getBlockId());
+
         enTrade.setB_hashvalue(-1);
 
 
@@ -147,18 +179,24 @@ public class NewEnTradeSubmit implements DataSubmit {
     //对B进行处理 ret=0 在区间前面，1在去见后面，2第一个数据，3,中间
     public int inserB(String enId, EnTradeDaoImpl enTradeDao, HashValue hv, List<EnTrade> result) {
         int ret;
-        List<EnTrade> enTrades1 = enTradeDao.getListById("b", enId);
+        List<EnTrade> enTrades1 = enTradeDao.getListById("a", enId);
         System.out.println("INsertB:  enTades1.size: " + enTrades1.size());
         int bid = enTrades1.get(0).getB_blockid();
+        TradeBlockIdCost.sum[bid]++;
+
         List<EnTrade> enTrades = enTradeDao.getListById("b_blockid", bid);
-        System.out.println("INsertB:  enTades.size: " + enTrades1.size());
+        System.out.println("INsertB:  enTades.size: " + enTrades.size());
+        System.out.println("INsertB:  enTades.size: " + enTrades);
         double theValue = 0.0;
         if (enTrades.get(0).getB_hashvalue() == -1) {
             //新插入的数直
-            theValue = Double.valueOf(DES.decryptBasedDes(enTrades.get(0).getB()));
+//a            theValue = Double.valueOf(DES.decryptBasedDes(enTrades.get(0).getB()));
+            theValue=Double.valueOf(enTrades.get(0).getB());
 
-        } else
+        } else{
+            System.out.println("！！！！！还真有！！！！！！！！！！！！！！！！！！");
             return -1;
+        }
         BlockId<Double> blockId = new TradeBlockIdCost();
         //倍数和假直的值
         int beishu = blockId.beiShu(theValue);
@@ -170,25 +208,28 @@ public class NewEnTradeSubmit implements DataSubmit {
 
         List<inerCalssCost> tempCosts = new ArrayList<>();
         inerCalssCost temp = new inerCalssCost();
-        temp.setCost(shu);
+        temp.setCost(theValue);
         temp.setEnTrade(enTrades.get(0));
         tempCosts.add(temp);
 
 
-        Double tempValue;
+        double tempValue;
 
         enTrades.get(0).setB_hashvalue(0);
         for (int i = 1; i < enTrades.size(); i++) {
             if (!enTrades.get(i).getB().equals("ThisIsBFalseData")) {
 
-                tempValue = Double.valueOf(DES.decryptBasedDes(enTrades.get(i).getB()));
+//                tempValue = Double.valueOf(DES.decryptBasedDes(enTrades.get(i).getB()));
+                tempValue = Double.valueOf(enTrades.get(i).getB());
 
 
             } else {
+                //C存倍数
                 int theBeishu;
-                theBeishu = enTrades.get(i).getB_hashvalue() - enTrades.get(i - 1).getB_hashvalue();
+                theBeishu = Integer.valueOf(enTrades.get(i).getC());
                 if (theBeishu == beishu) {
                     flag = 1;
+                    System.out.println("beishu===="+theBeishu+"..."+theBeishu+"\n");
                 }
                 tempValue = (theBeishu) * Parameters.COST_ACC + blockId.getFistValueInId(bid);
 
@@ -206,7 +247,9 @@ public class NewEnTradeSubmit implements DataSubmit {
             enTrade.setB_blockid(bid);
             enTrade.setB("ThisIsBFalseData");
             enTrade.setA_blockid(-1);
-            enTrade.setA(DES.encryptBasedDes(String.valueOf(-shu)));
+            enTrade.setC(String.valueOf(beishu));
+            enTrade.setA((String.valueOf(shu)));
+            //FALSESHU--;
 
 
             temp = new inerCalssCost();
@@ -215,7 +258,8 @@ public class NewEnTradeSubmit implements DataSubmit {
 
             inerCalssCostList.add(temp);
             inerCalssCostList.addAll(tempCosts);
-            tempCosts = inerCalssCostList;
+            tempCosts.clear();
+            tempCosts.addAll(inerCalssCostList);
         }
 
 
@@ -233,7 +277,7 @@ public class NewEnTradeSubmit implements DataSubmit {
 
             inerCalssCostList.add(tempCosts.get(0));
         } else {
-            sumhash+=blockId.beiShu(tempCosts.get(0).getCost());
+            sumhash+=addFalse;
             tempCosts.get(0).getEnTrade().setB_hashvalue(sumhash);
         }
 
@@ -245,7 +289,7 @@ public class NewEnTradeSubmit implements DataSubmit {
                 inerCalssCostList.add(tempCosts.get(i));
 
             } else {
-                sumhash+= blockId.beiShu(tempCosts.get(i).getCost());
+                sumhash+=addFalse;
                 tempCosts.get(i).getEnTrade().setB_hashvalue(sumhash);
             }
         }
@@ -254,9 +298,12 @@ public class NewEnTradeSubmit implements DataSubmit {
         List<Trade> tradeList = new ArrayList<>();
         Trade tempTrade = new Trade();
         for (int i = 0; i < inerCalssCostList.size(); i++) {
+//            tempTrade.setTno(Integer.valueOf(DES.decryptBasedDes(inerCalssCostList.get(i).getEnTrade().getA())));
+//            tempTrade.setCost(Double.valueOf(DES.decryptBasedDes(inerCalssCostList.get(i).getEnTrade().getB())));
+//            tempTrade.setDate((DES.decryptBasedDes(inerCalssCostList.get(i).getEnTrade().getC())));
             tempTrade.setTno(Integer.valueOf(DES.decryptBasedDes(inerCalssCostList.get(i).getEnTrade().getA())));
-            tempTrade.setCost(Double.valueOf(DES.decryptBasedDes(inerCalssCostList.get(i).getEnTrade().getB())));
-            tempTrade.setDate((DES.decryptBasedDes(inerCalssCostList.get(i).getEnTrade().getB())));
+            tempTrade.setCost(Double.valueOf(inerCalssCostList.get(i).getEnTrade().getB()));
+            tempTrade.setDate((DES.decryptBasedDes(inerCalssCostList.get(i).getEnTrade().getC())));
             tradeList.add(tempTrade);
         }
 
@@ -310,7 +357,9 @@ public class NewEnTradeSubmit implements DataSubmit {
             EnTrade enTrade = enTrades1.get(i);
             Trade trade1 = new Trade();
             trade1.setTno(Integer.valueOf(DES.decryptBasedDes(enTrade.getA())));
-            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+//a            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+            trade1.setCost(Double.valueOf((enTrade.getB())));
+
             trade1.setDate(DES.decryptBasedDes(enTrade.getC()));
 
             for(j=0;j<enTrades.size();j++){
@@ -321,7 +370,9 @@ public class NewEnTradeSubmit implements DataSubmit {
 
             Trade trade2 = new Trade();
             trade2.setTno(Integer.valueOf(DES.decryptBasedDes(enTrades.get(j).getA())));
-            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(j).getB())));
+//a            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(j).getB())));
+            trade2.setCost(Double.valueOf(enTrades.get(j).getB()));
+
             trade2.setDate(DES.decryptBasedDes(enTrades.get(j).getC()));
 
             enTrades.get(j).setB_hashpoint(hv.getHashValue(trade1.toString() + trade2.toString()));
@@ -347,11 +398,13 @@ public class NewEnTradeSubmit implements DataSubmit {
             EnTrade enTrade = enTrades1.get(i);
             Trade trade1 = new Trade();
             trade1.setTno(Integer.valueOf(DES.decryptBasedDes(enTrade.getA())));
-            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+//a            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+            trade1.setCost(Double.valueOf(enTrade.getB()));
+
             trade1.setDate(DES.decryptBasedDes(enTrade.getC()));
 
 
-            for (j=enTrades.size();j>=0; j--) {
+            for (j=enTrades.size()-1;j>=0; j--) {
                 if (!enTrades.get(j).getB().equals("ThisIsBFalseData")){
                     break;
                 }
@@ -359,7 +412,9 @@ public class NewEnTradeSubmit implements DataSubmit {
 
             Trade trade2 = new Trade();
             trade2.setTno(Integer.valueOf(DES.decryptBasedDes(enTrades.get(j).getA())));
-            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(j).getB())));
+//a            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(j).getB())));
+            trade2.setCost(Double.valueOf(enTrades.get(j).getB()));
+
             trade2.setDate(DES.decryptBasedDes(enTrades.get(j).getC()));
 
 
@@ -388,7 +443,9 @@ public class NewEnTradeSubmit implements DataSubmit {
             EnTrade enTrade = enTrades1.get(i);
             Trade trade1 = new Trade();
             trade1.setTno(Integer.valueOf(DES.decryptBasedDes(enTrade.getA())));
-            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+//            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+            trade1.setCost(Double.valueOf((enTrade.getB())));
+
             trade1.setDate(DES.decryptBasedDes(enTrade.getC()));
 
 
@@ -400,7 +457,9 @@ public class NewEnTradeSubmit implements DataSubmit {
 
             Trade trade2 = new Trade();
             trade2.setTno(Integer.valueOf(DES.decryptBasedDes(enTrades.get(j).getA())));
-            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(j).getB())));
+//            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(j).getB())));
+            trade2.setCost(Double.valueOf(enTrades.get(j).getB()));
+
             trade2.setDate(DES.decryptBasedDes(enTrades.get(j).getC()));
 
             enTrades.get(j).setB_hashpoint(hv.getHashValue(trade1.toString() + trade2.toString()));
@@ -422,7 +481,9 @@ public class NewEnTradeSubmit implements DataSubmit {
 
             enTrade = enTrades1.get(i);
             trade1.setTno(Integer.valueOf(DES.decryptBasedDes(enTrade.getA())));
-            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+            trade1.setCost(Double.valueOf(enTrade.getB()));
+
+//            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
             trade1.setDate(DES.decryptBasedDes(enTrade.getC()));
 
 
@@ -434,7 +495,9 @@ public class NewEnTradeSubmit implements DataSubmit {
             }
 
             trade2.setTno(Integer.valueOf(DES.decryptBasedDes(enTrades.get(j).getA())));
-            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(j).getB())));
+            trade2.setCost(Double.valueOf(enTrades.get(j).getB()));
+  //          trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(j).getB())));
+
             trade2.setDate(DES.decryptBasedDes(enTrades.get(j).getC()));
 
 
@@ -452,10 +515,11 @@ public class NewEnTradeSubmit implements DataSubmit {
     public void insertEnItem(Trade trade, EnTradeDaoImpl enTradeDao) {
         int aid = new TradeBlockIdTno().blockIdFunction(trade.getTno());
         List<EnTrade> enTrades = enTradeDao.getListById("a_blockid", aid);
-        System.out.println("insert B befor:" + enTrades.size());
+        System.out.println("insert A befor:" + enTrades.size());
         HashValue hv = new HMacMD5();
         int ret = insertItemByAID(trade, enTrades, hv);
-        System.out.println("insert B afte:" + enTrades.size());
+        TradeBlockIdTno.sum[aid]++;
+        System.out.println("insert A afte:" + enTrades.size());
 
 
         if (ret == 0) {
@@ -469,12 +533,16 @@ public class NewEnTradeSubmit implements DataSubmit {
             EnTrade enTrade = enTrades1.get(enTrades1.size() - 1);
             Trade trade1 = new Trade();
             trade1.setTno(Integer.valueOf(DES.decryptBasedDes(enTrade.getA())));
-            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+//a            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+            trade1.setCost(Double.valueOf(enTrade.getB()));
+
             trade1.setDate(DES.decryptBasedDes(enTrade.getC()));
 
             Trade trade2 = new Trade();
             trade2.setTno(Integer.valueOf(DES.decryptBasedDes(enTrades.get(0).getA())));
-            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(0).getB())));
+//a            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(0).getB())));
+            trade2.setCost(Double.valueOf(enTrades.get(0).getB()));
+
             trade2.setDate(DES.decryptBasedDes(enTrade.getC()));
 
             enTrades.get(0).setA_hashpoint(hv.getHashValue(trade1.toString() + trade2.toString()));
@@ -490,13 +558,18 @@ public class NewEnTradeSubmit implements DataSubmit {
             }
             EnTrade enTrade = enTrades1.get(0);
             Trade trade1 = new Trade();
-            trade1.setTno(Integer.valueOf(DES.decryptBasedDes(enTrade.getA())));
-            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+           trade1.setTno(Integer.valueOf(DES.decryptBasedDes(enTrade.getA())));
+
+//a            trade1.setTno(Integer.valueOf(enTrade.getA()));
+            trade1.setCost(Double.valueOf(enTrade.getB()));
+
             trade1.setDate(DES.decryptBasedDes(enTrade.getC()));
 
             Trade trade2 = new Trade();
             trade2.setTno(Integer.valueOf(DES.decryptBasedDes(enTrades.get(enTrades.size() - 1).getA())));
-            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(enTrades.size() - 1).getB())));
+//a            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(enTrades.size() - 1).getB())));
+
+            trade2.setCost(Double.valueOf(enTrades.get(enTrades.size() - 1).getB()));
             trade2.setDate(DES.decryptBasedDes(enTrade.getC()));
 
             enTrades1.get(0).setA_hashpoint(hv.getHashValue(trade1.toString() + trade2.toString()));
@@ -511,17 +584,22 @@ public class NewEnTradeSubmit implements DataSubmit {
             while (enTrades1.size() == 0) {
 
                 bid = blockId.getLastBlockId(bid);
+
                 enTrades1 = enTradeDao.getListById("a_blockid", bid);
             }
             EnTrade enTrade = enTrades1.get(enTrades1.size() - 1);
             Trade trade1 = new Trade();
             trade1.setTno(Integer.valueOf(DES.decryptBasedDes(enTrade.getA())));
-            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+//a            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+            trade1.setCost(Double.valueOf(enTrade.getB()));
+
             trade1.setDate(DES.decryptBasedDes(enTrade.getC()));
 
             Trade trade2 = new Trade();
             trade2.setTno(Integer.valueOf(DES.decryptBasedDes(enTrades.get(0).getA())));
-            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(0).getB())));
+// a           trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(0).getB())));
+            trade2.setCost(Double.valueOf(enTrades.get(0).getB()));
+
             trade2.setDate(DES.decryptBasedDes(enTrade.getC()));
 
             enTrades.get(0).setA_hashpoint(hv.getHashValue(trade1.toString() + trade2.toString()));
@@ -530,16 +608,21 @@ public class NewEnTradeSubmit implements DataSubmit {
             bid = blockId.getNextBlockId(aid);
             enTrades1 = enTradeDao.getListById("a_blockid", bid);
             while (enTrades1.size() == 0) {
+
                 bid = blockId.getNextBlockId(bid);
                 enTrades1 = enTradeDao.getListById("a_blockid", bid);
             }
             enTrade = enTrades1.get(0);
             trade1.setTno(Integer.valueOf(DES.decryptBasedDes(enTrade.getA())));
-            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+//a            trade1.setCost(Double.valueOf(DES.decryptBasedDes(enTrade.getB())));
+            trade1.setCost(Double.valueOf(enTrade.getB()));
+
             trade1.setDate(DES.decryptBasedDes(enTrade.getC()));
 
             trade2.setTno(Integer.valueOf(DES.decryptBasedDes(enTrades.get(enTrades.size() - 1).getA())));
-            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(enTrades.size() - 1).getB())));
+//A            trade2.setCost(Double.valueOf(DES.decryptBasedDes(enTrades.get(enTrades.size() - 1).getB())));
+            trade2.setCost(Double.valueOf(enTrades.get(enTrades.size() - 1).getB()));
+
             trade2.setDate(DES.decryptBasedDes(enTrade.getC()));
 
             enTrades1.get(0).setA_hashpoint(hv.getHashValue(trade1.toString() + trade2.toString()));
@@ -556,12 +639,29 @@ public class NewEnTradeSubmit implements DataSubmit {
 
     @Override
     public void copyFrom() {
+        TradeBlockIdCost.initSum();
+        TradeBlockIdTno.suminit();
         TradeDaoImpl tradeDao = (TradeDaoImpl) applicationContext.getBean("tradeDao");
         EnTradeDaoImpl enTradeDao = (EnTradeDaoImpl) applicationContext.getBean("entradeDao");
+
+        HashValue hv = new HMacMD5();
+//
+//        //————————————————————————
+//        int tno=2101;
+//        List<Trade> trade = tradeDao.getListById("tno", tno);
+//        System.out.println("copy__tno: "+(tno));
+//        insertEnItem(trade.get(0), enTradeDao);
+//        String ena = DES.encryptBasedDes(String.valueOf(trade.get(0).getCost()));
+//        insertEnItem1(ena, enTradeDao, hv);
+//        //——————————————————————————————————————————
 
         List<Trade> trades = tradeDao.getListById("tno", 1);
 
         BlockId<Integer> blockId = new TradeBlockIdTno();
+
+
+
+
 
 
         EnTrade enTrade = getFistHandle(trades.get(0));
@@ -571,24 +671,23 @@ public class NewEnTradeSubmit implements DataSubmit {
         enTrades.add(enTrade);
         enTradeDao.insertEnItems(enTrades);
 
-        HashValue hv = new HMacMD5();
-
-        insertEnItem1(enTrade.getB(), enTradeDao, hv);
+        insertEnItem1(enTrade.getA(), enTradeDao, hv);
 
 
         int[] ids = {1, 10, 2, 3, 4, 5, 6, 7, 8, 9};
 
 
-        for (int item : ids) {
-            for (int i = 0; i < 1000; i++) {
-                List<Trade> trade = tradeDao.getListById("tno", 10 * i + item);
 
-                System.out.println("copy__tno: "+(10*i+item));
+            for (int i = 2; i <=10000; i++) {
+
+                List<Trade> trade = tradeDao.getListById("tno", i);
+                System.out.println("copy__tno: "+(i));
                 insertEnItem(trade.get(0), enTradeDao);
-                String ena = DES.encryptBasedDes(String.valueOf(trade.get(0).getCost()));
+                String ena = DES.encryptBasedDes(String.valueOf(trade.get(0).getTno()));
                 insertEnItem1(ena, enTradeDao, hv);
+//                break;
             }
-        }
+
 
     }
 
@@ -627,6 +726,28 @@ public class NewEnTradeSubmit implements DataSubmit {
             return enTrade;
         }
     }
+
+    class inerCalssTno {
+        EnTrade enTrade;
+        Integer tno;
+
+        public void setEnTrade(EnTrade enTrade) {
+            this.enTrade = enTrade;
+        }
+
+        public void setTno(Integer tno) {
+            this.tno = tno;
+        }
+
+        public EnTrade getEnTrade() {
+            return enTrade;
+        }
+
+        public Integer getTno() {
+            return tno;
+        }
+    }
+
 
 }
 

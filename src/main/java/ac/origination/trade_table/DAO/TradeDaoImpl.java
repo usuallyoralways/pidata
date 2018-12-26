@@ -90,7 +90,7 @@ public class TradeDaoImpl extends Dao<Trade> {
     }
 
     public List<Trade> getList(){
-        String sql = "select * from t_trade;";
+        String sql = "select * from t_trade order by cost;";
         final List<Trade> trades = new ArrayList<>();
         getJdbcTemplate().query(sql,new RowCallbackHandler() {
             @Override

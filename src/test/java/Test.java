@@ -1,5 +1,10 @@
+import ac.common.BlockId;
+import ac.origination.trade_table.DAO.EnTradeDaoImpl;
+import ac.origination.trade_table.DAO.Model.Trade;
+import ac.origination.trade_table.DAO.TradeDaoImpl;
 import ac.origination.trade_table.EnTradeDataSubmit;
 import ac.origination.trade_table.HMacMD5;
+import ac.origination.trade_table.TradeBlockIdCost;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -9,21 +14,19 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Test {
 
 
     public static void main(String args[]) {
-        int beishu=126;
-        Double firstValue=82.677;
-        double acc=0.001;
-        Double shu= (beishu*100+firstValue*100*((int)(1/acc)))/(((int)(1/(acc)))*100);
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+        TradeDaoImpl tradeDao = (TradeDaoImpl) applicationContext.getBean("tradeDao");
 
-        System.out.println(shu);
-        System.out.println((((int)(1/(acc)))*100));
-        System.out.println(beishu*100+firstValue*100*((int)(1/acc)));
-        System.out.println(firstValue*100*((int)(1/acc)));
-
+        BlockId<Double> blockId=new TradeBlockIdCost();
+        System.out.println(blockId.beiShu(8191651.5 ));
+        System.out.println(blockId.beiShu(8192715.0  ));
 
     }
 

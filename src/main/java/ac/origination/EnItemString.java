@@ -13,6 +13,8 @@ public class EnItemString<T> {
 
     public void setEnItem(T data) {
         this.data=data;
+//        enItem= String.valueOf(data);
+
         enItem= DES.encryptBasedDes(String.valueOf(data));
     }
     @Override

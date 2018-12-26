@@ -4,6 +4,12 @@ import ac.common.BlockId;
 import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 public class TradeBlockIdCost extends BlockId <Double>{
+    static int sum[]=new int[2000];
+    static void initSum(){
+        for (int i=0;i<2000;i++) {
+            sum[i]=0;
+        }
+    }
 
     @Override
     public int blockIdFunction(Double data) {
@@ -17,7 +23,14 @@ public class TradeBlockIdCost extends BlockId <Double>{
 
     @Override
     public int getNextBlockId(int blockId) {
-        return (blockId+1)%(Parameters.COST_LASTID+1);
+        int i=blockId;
+        int ret;
+        do {
+            i++;
+            ret= (i)%(Parameters.COST_LASTID+1);
+        }
+        while (sum[ret]==0);
+        return ret;
     }
 
     @Override
@@ -31,7 +44,14 @@ public class TradeBlockIdCost extends BlockId <Double>{
 
     @Override
     public int getLastBlockId(int blockId) {
-       return (blockId-1+Parameters.COST_LASTID+1)%(Parameters.COST_LASTID+1);
+        int ret;
+        int i=blockId;
+        do {
+            i--;
+            ret= (i-1+2*Parameters.COST_LASTID+2)%(Parameters.COST_LASTID+1);
+        }while (sum[ret]==0);
+
+        return ret;
     }
 
     @Override
